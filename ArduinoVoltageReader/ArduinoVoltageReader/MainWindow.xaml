@@ -23,13 +23,13 @@
         <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Padding="1" Header="Signal Capture Settings">
             <StackPanel Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Background="LightBlue" BorderBrush="Black" BorderThickness="1">Sampling Rate (us):</Label>
-                <TextBox Height="27" Width="75" Padding="2" />
+                <TextBox Height="27" Width="75" Padding="2" Text="{Binding SamplingRate}"/>
 
                 <Label VerticalAlignment="Center" Background="LightBlue" BorderBrush="Black" BorderThickness="1">Sampling Window (ms):</Label>
-                <TextBox Height="27" Width="75" Padding="2"/>
+                <TextBox Height="27" Width="75" Padding="2" Text="{Binding SamplingWindow}"/>
 
                 <Label VerticalAlignment="Center" Background="LightBlue" BorderBrush="Black" BorderThickness="1">Voltage Range (V):</Label>
-                <TextBox Height="27"  Width="75" Padding="2"/>
+                <TextBox Height="27"  Width="75" Padding="2" Text="{Binding VoltageRange}"/>
             </StackPanel>
         </GroupBox>
         

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using ArduinoVoltageReader.Interfaces;
-using ArduinoVoltageReader.Views;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,31 +27,10 @@ namespace ArduinoVoltageReader.ViewModel
 
 
         public List<float[]> CapturedData { get; set; }
-        public string SamplingRate { get; set; } = "";
-        public string SamplingWindow { get; set; } = "";
-        public string VoltageRange { get; set; } = "";
+        public string SamplingRate { get; set; } = "100";
+        public string SamplingWindow { get; set; } = "10";
+        public string VoltageRange { get; set; } = "5";
 
-
-        public string ReadVoltage
-        {
-            get { return _readVoltage; }
-            set
-            {
-                _readVoltage = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _readVoltageWindow;
-        public string ReadVoltageWindow
-        {
-            get { return _readVoltageWindow; }
-            set
-            {
-                _readVoltageWindow = value;
-                OnPropertyChanged();
-            }
-        }
 
         private string _connectionStatus;
         public string ConnectionStatus
@@ -62,17 +39,6 @@ namespace ArduinoVoltageReader.ViewModel
             set
             {
                 _connectionStatus = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<GraphView> _canvasGraph;
-        public ObservableCollection<GraphView> CanvasGraph
-        {
-            get { return _canvasGraph; }
-            set
-            {
-                _canvasGraph = value;
                 OnPropertyChanged();
             }
         }
@@ -102,31 +68,36 @@ namespace ArduinoVoltageReader.ViewModel
 
         public GraphData ReadWindowAIVoltage()
         {
-            string signalCapture = _device.GetWindowAI(5, 0);
-
-            List<float[]> dataList = new List<float[]>();
-            string[] point;
-
-            string[] dataPoints = signalCapture.Split('\r');
-            float minMicros = float.Parse(dataPoints[0].Split(",")[0]);
-            float maxMicros = float.Parse(dataPoints[0].Split(",")[0]);
-            float minReading = float.Parse(dataPoints[0].Split(",")[1]);
-            float maxReading = float.Parse(dataPoints[0].Split(",")[1]);
-
-            for (int index = 1; index < dataPoints.Length; index++)
+            if(int.TryParse(SamplingWindow, out int samplingWindow) && int.TryParse(SamplingRate, out int samplingRate))
             {
-                point = dataPoints[index].Split(',');
-                dataList.Add(new float[2] { float.Parse(point[0]) - minMicros, float.Parse(point[1]) });
+                string signalCapture = _device.GetWindowAI(samplingWindow, samplingRate);
 
-                if (float.Parse(point[0]) < minMicros) { minMicros = float.Parse(point[0]); }
-                if (float.Parse(point[0]) > maxMicros) { maxMicros = float.Parse(point[0]); }
+                List<float[]> dataList = new List<float[]>();
+                string[] point;
 
-                if (float.Parse(point[1]) < minReading) { minReading = float.Parse(point[1]); }
-                if (float.Parse(point[1]) > maxReading) { maxReading = float.Parse(point[1]); }
+                string[] dataPoints = signalCapture.Split('\r');
+                float minMicros = float.Parse(dataPoints[0].Split(",")[0]);
+                float maxMicros = float.Parse(dataPoints[0].Split(",")[0]);
+                float minReading = float.Parse(dataPoints[0].Split(",")[1]);
+                float maxReading = float.Parse(dataPoints[0].Split(",")[1]);
+
+                for (int index = 1; index < dataPoints.Length; index++)
+                {
+                    point = dataPoints[index].Split(',');
+                    dataList.Add(new float[2] { float.Parse(point[0]) - minMicros, float.Parse(point[1]) });
+
+                    if (float.Parse(point[0]) < minMicros) { minMicros = float.Parse(point[0]); }
+                    if (float.Parse(point[0]) > maxMicros) { maxMicros = float.Parse(point[0]); }
+
+                    if (float.Parse(point[1]) < minReading) { minReading = float.Parse(point[1]); }
+                    if (float.Parse(point[1]) > maxReading) { maxReading = float.Parse(point[1]); }
+                }
+
+                CapturedData = dataList;
+                return new GraphData { XMax = maxMicros, YMax = maxReading, DataPoints = dataList };
             }
 
-            CapturedData = dataList;
-            return new GraphData {XMax = maxMicros, YMax = maxReading, DataPoints = dataList };
+            return null;
         }
 
 

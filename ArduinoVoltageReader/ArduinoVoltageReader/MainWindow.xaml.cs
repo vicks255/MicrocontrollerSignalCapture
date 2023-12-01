@@ -1,13 +1,8 @@
-﻿using ArduinoVoltageReader.Interfaces;
-using ArduinoVoltageReader.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using ArduinoVoltageReader.ViewModel;
 using System.Windows.Shapes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.IO;
 
 namespace ArduinoVoltageReader
 {
@@ -18,18 +13,13 @@ namespace ArduinoVoltageReader
     {
         
 
-        public MainWindow(IServiceProvider services)
+        public MainWindow(AppViewModel appViewModel)
         {
-            _services = services;
-            _appViewModel = new AppViewModel(_services);
-            _capturedData = new List<float[]>();
+            _appViewModel = appViewModel;
             InitializeComponent();
         }
 
-
-        private IServiceProvider _services;
         private AppViewModel _appViewModel;
-        private List<float[]> _capturedData;
         private int _graphWidth = 650;
         private int _graphHeight = 300;
 
@@ -40,11 +30,13 @@ namespace ArduinoVoltageReader
             float yValue;
             float X1 = 0;
             float Y1 = 0;
+
             GraphData dataPoints = _appViewModel.ReadWindowAIVoltage();
 
-            dataPoints.YMax = 1;
+            _ = float.TryParse(_appViewModel.VoltageRange, out float yScale) ? dataPoints.YMax = yScale : dataPoints.YMax = 5;
+
             Graph.Children.Clear();
-            SetGraph(10, 4);            
+            SetGraph(10, 10);
 
             foreach(float[] shape in dataPoints.DataPoints)
             {
@@ -53,8 +45,8 @@ namespace ArduinoVoltageReader
 
                 Ellipse newEllipse = new Ellipse
                 {
-                    Height = 10,
-                    Width = 10,
+                    Height = 5,
+                    Width = 5,
                     Fill = new SolidColorBrush(Colors.Red),
                     ToolTip = $"Time: {shape[0]} us\r\nVoltage: {shape[1]} V"
                 };
@@ -75,8 +67,8 @@ namespace ArduinoVoltageReader
                 Graph.Children.Add(newEllipse);
                 Graph.Children.Add(newLine);
 
-                Canvas.SetLeft(newEllipse, xValue - 5);
-                Canvas.SetBottom(newEllipse, yValue - 5);
+                Canvas.SetLeft(newEllipse, xValue - 2.5);
+                Canvas.SetBottom(newEllipse, yValue - 2.5);
 
                 Canvas.SetLeft(newLine, 0);
                 Canvas.SetBottom(newLine, 0);

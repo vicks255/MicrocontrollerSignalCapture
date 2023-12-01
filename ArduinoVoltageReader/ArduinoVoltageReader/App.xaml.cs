@@ -43,7 +43,7 @@ namespace ArduinoVoltageReader
             AppViewModel appViewModel = new AppViewModel(_services);
             appViewModel.ConnectionStatus = $"Device Connection Status: {connectedDevice}";
 
-            MainWindow = new MainWindow(_services);
+            MainWindow = new MainWindow(appViewModel);
             MainWindow.DataContext = appViewModel;
             MainWindow.Show();
         }        
