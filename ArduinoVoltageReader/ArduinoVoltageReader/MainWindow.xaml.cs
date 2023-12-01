@@ -11,8 +11,6 @@ namespace ArduinoVoltageReader
     /// </summary>
     public partial class MainWindow : Window
     {
-        
-
         public MainWindow(AppViewModel appViewModel)
         {
             _appViewModel = appViewModel;

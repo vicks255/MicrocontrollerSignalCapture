@@ -21,11 +21,18 @@ namespace ArduinoVoltageReader.DeviceServiceRegistration
             throw new NotImplementedException();
         }
 
+        public int[] GetContinuousAI(int sampleIntervalInMilliseconds)
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMicroSeconds)
         {
-            // Analog pin reads 0-5 volts from 0-1023
             string readings;
             string[] response = new string[3];
+            long time;
+            double reading;
+            double calibrationValue = 0.003; // Sets counts to volts
 
             // analog pin requires 100us to read.
             if (sampleIntervalInMicroSeconds < 100)
@@ -46,24 +53,22 @@ namespace ArduinoVoltageReader.DeviceServiceRegistration
 
             string[] dataPoints = readings.Split('\r');
             string calculatedReadings = "";
-            if(dataPoints.Length > 0)
+            if (dataPoints.Length > 0)
             {
                 string[] dataPoint = dataPoints[0].Split(',');
                 long startTime = long.Parse(dataPoint[0]);
                 calculatedReadings = $"0,{dataPoint[1]}";
 
-                for(int index = 1; index < dataPoints.Length; index++)
+                for (int index = 1; index < dataPoints.Length; index++)
                 {
                     dataPoint = dataPoints[index].Split(",");
-                    calculatedReadings += $"\r\n{long.Parse(dataPoint[0]) - startTime},{int.Parse(dataPoint[1]) * 0.48876}";
+                    time = long.Parse(dataPoint[0]) - startTime;
+                    reading = double.Parse(dataPoint[1]) * calibrationValue;
+
+                    calculatedReadings += $"\r\n{time},{reading}";
                 }
             }
             return calculatedReadings;
-        }
-
-        public int[] GetContinuousAI(int sampleIntervalInMilliseconds)
-        {
-            throw new NotImplementedException();
         }
     }
 }
