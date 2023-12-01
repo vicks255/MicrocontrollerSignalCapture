@@ -1,0 +1,13 @@
+{
+  "SerialParameters": [
+    { "BaudRate": "9600" },
+    { "Parity": "None" },
+    { "DataBits": "8" },
+    { "StopBits": "One" },
+    { "HandShake": "None" },
+    { "WriteTimeout": "1000" },
+    { "ReadTimeout": "1000" },
+    { "RTSEnable": "true" },
+    { "DTREnable": "true" }
+  ]
+}
