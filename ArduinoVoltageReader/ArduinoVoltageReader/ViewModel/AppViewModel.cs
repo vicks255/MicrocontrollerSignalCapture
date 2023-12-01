@@ -7,6 +7,7 @@ using System.Windows;
 using ArduinoVoltageReader.Interfaces;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 
 namespace ArduinoVoltageReader.ViewModel
 {
@@ -56,7 +57,15 @@ namespace ArduinoVoltageReader.ViewModel
                 {
                     writeFile += $"\r\n{measurement[0]},{measurement[1]}";
                 }
-                File.WriteAllText(@"C:\DataCapture.csv", writeFile);
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "CSV File|*.csv",
+                    Title = "Save Data To CSV",
+                };
+                saveFileDialog.ShowDialog();
+
+                if(!string.IsNullOrEmpty(saveFileDialog.FileName))
+                    File.WriteAllText(saveFileDialog.FileName, writeFile);
             }
             else
             {
