@@ -1,6 +1,7 @@
 ﻿using ArduinoVoltageReader.DeviceServiceRegistration;
 using ArduinoVoltageReader.Interfaces;
 using System;
+using System.Windows;
 
 namespace ArduinoVoltageReader.Devices
 {
@@ -16,6 +17,11 @@ namespace ArduinoVoltageReader.Devices
 
                 case "TivaC_123":
                     _controller = (IMicrocontroller) new TivaC_123(services);
+                    break;
+
+                default:
+                    MessageBox.Show("No Microcontroller Detected:\r\nLoading simulated device", "No Microcontroller Detected", MessageBoxButton.OK);
+                    _controller = (IMicrocontroller)new MockDevice();
                     break;
             }
         }

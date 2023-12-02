@@ -3,7 +3,7 @@
     public interface IMicrocontroller
     {
         float GetSingleAI();
-        string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMilliseconds);
-        int[] GetContinuousAI(int sampleIntervalInMilliseconds);
+        string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMicroseconds);
+        int[] GetContinuousAI(int sampleIntervalInMicroseconds);
     }
 }

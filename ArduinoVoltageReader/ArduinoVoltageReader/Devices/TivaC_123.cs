@@ -68,7 +68,7 @@ namespace ArduinoVoltageReader.DeviceServiceRegistration
                     calculatedReadings += $"\r\n{time},{reading}";
                 }
             }
-            return calculatedReadings;
+            return calculatedReadings.Trim();
         }
     }
 }
