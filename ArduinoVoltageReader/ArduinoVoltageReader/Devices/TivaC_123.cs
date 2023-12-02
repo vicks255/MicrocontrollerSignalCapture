@@ -32,7 +32,7 @@ namespace ArduinoVoltageReader.DeviceServiceRegistration
             string[] response = new string[3];
             long time;
             double reading;
-            double calibrationValue = 0.003; // Sets counts to volts
+            double voltsToCountsRatio = 5.0 / 1023;
 
             // analog pin requires 100us to read.
             if (sampleIntervalInMicroSeconds < 100)
@@ -63,7 +63,7 @@ namespace ArduinoVoltageReader.DeviceServiceRegistration
                 {
                     dataPoint = dataPoints[index].Split(",");
                     time = long.Parse(dataPoint[0]) - startTime;
-                    reading = double.Parse(dataPoint[1]) * calibrationValue;
+                    reading = double.Parse(dataPoint[1]) * voltsToCountsRatio;
 
                     calculatedReadings += $"\r\n{time},{reading}";
                 }
