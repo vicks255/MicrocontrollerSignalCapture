@@ -11,7 +11,8 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130"/>
-            <ColumnDefinition Width="670"/>
+            <ColumnDefinition Width="506.667"/>
+            <ColumnDefinition Width="163.333"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
@@ -20,7 +21,7 @@
         </Grid.RowDefinitions>
 
 
-        <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="75" Width="600" Padding="1" Header="Settings">
+        <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="75" Width="650" Padding="1" Header="Settings" Margin="0,2,0,2">
             <StackPanel Orientation="Horizontal">
                 <GroupBox Header=" Sampling Rate (us)" VerticalAlignment="Center">
                     <TextBox Height="20" Width="75" Padding="2" Text="{Binding SamplingRate}" Background="LightGreen"/>
@@ -29,17 +30,21 @@
                     <TextBox Height="20" Width="75" Padding="2" Text="{Binding SamplingWindow}" Background="LightGreen"/>
                 </GroupBox>
                 <GroupBox Header="Voltage Range (V)" VerticalAlignment="Center">
-                    <TextBox Height="20"  Width="75" Padding="2" Text="{Binding VoltageRange}" Background="LightGreen"/>
+                    <TextBox Height="20"  Width="75" Padding="2" Text="{Binding VoltageRange}" Background="LightGreen" />
                 </GroupBox>
+                <Border Width="10"/>
+                <CheckBox Content="Display Channel 1" VerticalAlignment="Center" IsChecked="{Binding IsChannel1Checked}" />
+                <Border Width="10"/>
+                <CheckBox Content="Display Channel 2" VerticalAlignment="Center" IsChecked="{Binding IsChannel2Checked}" />
             </StackPanel>
         </GroupBox>
-        
+
         <StackPanel Grid.Row="1" Grid.Column="0">
             <Button  Height="35" VerticalAlignment="Top" Content="Signal Capture" Click="GetSignalCapture"/>
             <Button  Height="35" VerticalAlignment="Top" Content="Export Capture To CSV" Command="{Binding WriteData}"/>
         </StackPanel>
 
-        <Canvas x:Name="Graph" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
+        <Canvas x:Name="Graph" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2">
         </Canvas>
     </Grid>
 </Window>

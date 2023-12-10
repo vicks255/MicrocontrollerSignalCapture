@@ -19,7 +19,7 @@ namespace ArduinoVoltageReader.Devices
             throw new NotImplementedException();
         }
 
-        public string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMicroseconds)
+        public string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMicroseconds, string channels)
         {
             string simulatedSignal = "";
             int numberOfPoints = (windowInMilliseconds * 1000) / sampleIntervalInMicroseconds;
@@ -28,7 +28,10 @@ namespace ArduinoVoltageReader.Devices
             for(int point = 0; point <= numberOfPoints; point++)
             {
                 angle = (2 * Math.PI * point) / numberOfPoints;
-                simulatedSignal += $"\r\n{point * sampleIntervalInMicroseconds},{2.55 + (1.5 * Math.Sin(angle))}";
+                simulatedSignal += $"\r\n{point * sampleIntervalInMicroseconds}," +
+                                   $"{2.55 + (1.5 * Math.Sin(angle))}," +
+                                   $"{point * sampleIntervalInMicroseconds}," +
+                                   $"{2.55 + (1.5 * Math.Cos(angle))}";
             }
             return simulatedSignal.Trim();
         }

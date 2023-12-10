@@ -26,6 +26,6 @@ namespace ArduinoVoltageReader.DeviceServiceRegistration
 
         public int[] GetContinuousAI(int sampleIntervalInMilliseconds) => _controller.GetContinuousAI(sampleIntervalInMilliseconds);
         public float GetSingleAI() => _controller.GetSingleAI();
-        public string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMilliseconds) => _controller.GetWindowAI(windowInMilliseconds, sampleIntervalInMilliseconds);
+        public string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMilliseconds, string channels) => _controller.GetWindowAI(windowInMilliseconds, sampleIntervalInMilliseconds, channels);
     }
 }

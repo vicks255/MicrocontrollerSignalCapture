@@ -8,6 +8,6 @@
 
         int[] GetContinuousAI(int sampleIntervalInMilliseconds);
         float GetSingleAI();
-        string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMicroSeconds);
+        string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMicroSeconds, string channels);
     }
 }

@@ -1,62 +1,97 @@
-  int analogPin = A0;
-  int voltage = 0;
+int analogPin0 = A0;
+int analogPin7 = A7;
+
+int voltage0 = 0;
+int voltage7 = 0;
   
-  int window;
-  int sampleTime;
+int window;
+int sampleTime;
+int channels;
   
-  long windowBeginTime;
+long windowBeginTime;
   
-  String command;
-  String voltageList;
+String command;
+String voltageList;
 
 
-  void setup()
+void setup()
+{
+  Serial.begin(9600);
+}
+
+
+void loop()
+{
+  while(Serial.available() > 0)
   {
-    Serial.begin(9600);
-  }
+    command = Serial.readString();
+    command.trim();
 
-
-  void loop()
-  {
-    while(Serial.available() > 0)
+    if(command == "Model")
     {
-      command = Serial.readString();
-      command.trim();
+      Serial.println("TivaC_123");
+    }
+      
+    if(command == "window")
+    {
+      Serial.println("send_window");
+      window = Serial.parseInt();
+        
+      Serial.println("send_sampling_interval");
+      sampleTime = Serial.parseInt();
+        
+      Serial.println("send_channels");
+      channels = Serial.parseInt();
 
-      if(command == "Model")
+      Serial.println("beginning_sampling");
+        
+      windowBeginTime = millis();
+      switch(channels)
       {
-        Serial.println("TivaC_123");
+        case 1:
+          voltage0 = analogRead(analogPin0);
+          voltageList = String(micros()) + "," + String(voltage0) + ",0,0";
+          break;
+
+        case 2:
+          voltage7 = analogRead(analogPin7);
+          voltageList = "0,0," + String(micros()) + "," + String(voltage7);
+          break;
+
+        case 12:
+          voltage0 = analogRead(analogPin0);
+          voltageList = String(micros()) + "," + String(voltage0);
+
+          voltage7 = analogRead(analogPin7);
+          voltageList = voltageList + "," + String(micros()) + "," + String(voltage7);
+          break;
       }
-      
-      
-      if(command == "window")
+        
+      while((millis() - windowBeginTime) < window)
       {
-        Serial.println("send_window");
-        window = Serial.parseInt();
-        
-        Serial.println("send_sampling_interval");
-        sampleTime = Serial.parseInt();
-        
-        Serial.println(command + " - " + String(window) + "ms - " + String(sampleTime) + "us");
-        
-        windowBeginTime = millis();
-        voltage = analogRead(analogPin);
-        voltageList = String(micros()) + "," + String(voltage);
-        
-        while((millis() - windowBeginTime) < window)
+        delayMicroseconds(sampleTime);
+        switch(channels)
         {
-          delayMicroseconds(sampleTime);
-          voltage = analogRead(analogPin);
-          voltageList = voltageList + "\r" + String(micros()) + "," + String(voltage);
+          case 1:
+            voltage0 = analogRead(analogPin0);
+            voltageList = voltageList + "\r" + String(micros()) + "," + String(voltage0) + ",0,0";
+            break;
+
+          case 2:
+            voltage7 = analogRead(analogPin7);
+            voltageList = voltageList + "\r0,0,"  + String(micros()) + "," + String(voltage7);
+            break;
+
+          case 12:
+            voltage0 = analogRead(analogPin0);
+            voltageList = voltageList + "\r" + String(micros()) + "," + String(voltage0);
+
+            voltage7 = analogRead(analogPin7);
+            voltageList = voltageList + "," + String(micros()) + "," + String(voltage7);
+            break;
         }
-        Serial.println(voltageList);
       }
-
-
-      if(command == "A0")
-      {
-        voltage = analogRead(analogPin);
-        Serial.println(voltage);
-      }
+      Serial.println(voltageList);
     }
   }
+}

@@ -3,6 +3,8 @@ using System.Windows.Shapes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Data;
+using System.Collections.Generic;
 
 namespace ArduinoVoltageReader
 {
@@ -20,56 +22,110 @@ namespace ArduinoVoltageReader
         private AppViewModel _appViewModel;
         private int _graphWidth = 650;
         private int _graphHeight = 300;
+        private float _xMax = 10000;
+        private float _yMax = 5;
 
 
         private void GetSignalCapture(object sender, RoutedEventArgs e)
+        {
+            GraphData dataPoints = _appViewModel.ReadWindowAIVoltage();
+
+            _ = float.TryParse(_appViewModel.VoltageRange, out float yScale) ? _yMax = yScale : _yMax = 5;
+            Graph.Children.Clear();
+            SetGraph(10, 10);
+
+            if (_appViewModel.IsChannel1Checked)
+                DrawPoints(dataPoints.Channel1Points, new SolidColorBrush(Colors.Red));
+
+            if (_appViewModel.IsChannel2Checked)
+                DrawPoints(dataPoints.Channel2Points, new SolidColorBrush(Colors.Blue));
+        }
+
+
+        private void DrawPoints(List<float[]> dataPoints, SolidColorBrush solidColorBrush)
         {
             float xValue;
             float yValue;
             float X1 = 0;
             float Y1 = 0;
+            bool firstPoint = true;
 
-            GraphData dataPoints = _appViewModel.ReadWindowAIVoltage();
-
-            _ = float.TryParse(_appViewModel.VoltageRange, out float yScale) ? dataPoints.YMax = yScale : dataPoints.YMax = 5;
-
-            Graph.Children.Clear();
-            SetGraph(10, 10);
-
-            foreach(float[] shape in dataPoints.DataPoints)
+            foreach (float[] shape in dataPoints)
             {
-                xValue = (shape[0] / dataPoints.XMax) * _graphWidth;
-                yValue = (shape[1] / dataPoints.YMax) * _graphHeight;
+                xValue = (shape[0] / _xMax) * _graphWidth;
+                yValue = (shape[1] / _yMax) * _graphHeight;
 
-                Ellipse newEllipse = new Ellipse
+                Ellipse channel1Ellipse = new Ellipse
                 {
                     Height = 5,
                     Width = 5,
-                    Fill = new SolidColorBrush(Colors.Red),
-                    ToolTip = $"Time: {shape[0]} us\r\nVoltage: {shape[1]} V"
+                    Fill = solidColorBrush,
+                    ToolTip = $"Time: {shape[0]} us\r\nVoltage: {shape[1]} V",
+                    Visibility = _appViewModel.Channel1Visible
                 };
+                Graph.Children.Add(channel1Ellipse);
+                Canvas.SetLeft(channel1Ellipse, xValue - 2.5);
+                Canvas.SetBottom(channel1Ellipse, yValue - 2.5);
 
-                Line newLine = new Line
+                if (!firstPoint)
                 {
-                    X1 = X1,
-                    Y1 = -Y1,
-                    X2 = xValue,
-                    Y2 = -yValue,
-                    StrokeThickness = 1,
-                    Stroke = new SolidColorBrush(Colors.Red)
-                };
-
+                    Line channel1Line = new Line
+                    {
+                        X1 = X1,
+                        Y1 = -Y1,
+                        X2 = xValue,
+                        Y2 = -yValue,
+                        StrokeThickness = 1,
+                        Stroke = solidColorBrush,
+                        Visibility = _appViewModel.Channel1Visible
+                    };
+                    Graph.Children.Add(channel1Line);
+                    Canvas.SetLeft(channel1Line, 0);
+                    Canvas.SetBottom(channel1Line, 0);
+                }
+                firstPoint = false;
                 X1 = xValue;
                 Y1 = yValue;
+            }
 
-                Graph.Children.Add(newEllipse);
-                Graph.Children.Add(newLine);
 
-                Canvas.SetLeft(newEllipse, xValue - 2.5);
-                Canvas.SetBottom(newEllipse, yValue - 2.5);
+            firstPoint = true;
+            foreach (float[] shape in dataPoints)
+            {
+                xValue = (shape[0] / _xMax) * _graphWidth;
+                yValue = (shape[1] / _yMax) * _graphHeight;
 
-                Canvas.SetLeft(newLine, 0);
-                Canvas.SetBottom(newLine, 0);
+                Ellipse channel1Ellipse = new Ellipse
+                {
+                    Height = 5,
+                    Width = 5,
+                    Fill = solidColorBrush,
+                    ToolTip = $"Time: {shape[0]} us\r\nVoltage: {shape[1]} V",
+                    Visibility = _appViewModel.Channel2Visible
+                };
+                Graph.Children.Add(channel1Ellipse);
+                Canvas.SetLeft(channel1Ellipse, xValue - 2.5);
+                Canvas.SetBottom(channel1Ellipse, yValue - 2.5);
+
+                if (!firstPoint)
+                {
+                    Line channel1Line = new Line
+                    {
+                        X1 = X1,
+                        Y1 = -Y1,
+                        X2 = xValue,
+                        Y2 = -yValue,
+                        StrokeThickness = 1,
+                        Stroke = solidColorBrush,
+                        Visibility = _appViewModel.Channel2Visible
+                    };
+                    Graph.Children.Add(channel1Line);
+                    Canvas.SetLeft(channel1Line, 0);
+                    Canvas.SetBottom(channel1Line, 0);
+                }
+                firstPoint = false;
+                X1 = xValue;
+                Y1 = yValue;
             }
         }
 
