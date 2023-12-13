@@ -40,14 +40,11 @@ namespace ArduinoVoltageReader.ViewModel
         private bool _isChannel1Checked;
         public bool IsChannel1Checked
         {
-            get { return _isChannel1Checked; }
+            get => _isChannel1Checked;
             set
             {
                 _isChannel1Checked = value;
-                if (_isChannel1Checked)
-                    Channel1Visible = Visibility.Visible;
-                else
-                    Channel1Visible = Visibility.Hidden;
+                Channel1Visible = _isChannel1Checked ? Channel1Visible = Visibility.Visible : Channel1Visible = Visibility.Hidden;
 
                 _channels = getChannels();
                 OnPropertyChanged();
@@ -57,14 +54,11 @@ namespace ArduinoVoltageReader.ViewModel
         private bool _isChannel2Checked;
         public bool IsChannel2Checked
         {
-            get { return _isChannel2Checked; }
+            get => _isChannel2Checked;
             set
             {
                 _isChannel2Checked = value;
-                if (_isChannel2Checked)
-                    Channel2Visible = Visibility.Visible;
-                else
-                    Channel2Visible = Visibility.Hidden;
+                Channel2Visible = _isChannel2Checked ? Channel2Visible = Visibility.Visible : Channel2Visible = Visibility.Hidden;
 
                 _channels = getChannels();
                 OnPropertyChanged();
@@ -74,7 +68,7 @@ namespace ArduinoVoltageReader.ViewModel
         private Visibility _channel1Visible;
         public Visibility Channel1Visible
         {
-            get { return _channel1Visible; }
+            get => _channel1Visible;
             set
             {
                 _channel1Visible = value;
@@ -85,7 +79,7 @@ namespace ArduinoVoltageReader.ViewModel
         private Visibility _channel2Visible;
         public Visibility Channel2Visible
         {
-            get { return (_channel2Visible); }
+            get => (_channel2Visible);
             set
             {
                 _channel2Visible = value;
@@ -97,7 +91,7 @@ namespace ArduinoVoltageReader.ViewModel
         private string _connectionStatus;
         public string ConnectionStatus
         {
-            get { return _connectionStatus; }
+            get => _connectionStatus;
             set
             {
                 _connectionStatus = value;

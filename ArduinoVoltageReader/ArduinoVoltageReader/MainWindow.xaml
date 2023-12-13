@@ -33,9 +33,9 @@
                     <TextBox Height="20"  Width="75" Padding="2" Text="{Binding VoltageRange}" Background="LightGreen" />
                 </GroupBox>
                 <Border Width="10"/>
-                <CheckBox Content="Display Channel 1" VerticalAlignment="Center" IsChecked="{Binding IsChannel1Checked}" />
+                <CheckBox Content="Display Channel 1" VerticalAlignment="Center" IsChecked="{Binding IsChannel1Checked}" Foreground="Red" />
                 <Border Width="10"/>
-                <CheckBox Content="Display Channel 2" VerticalAlignment="Center" IsChecked="{Binding IsChannel2Checked}" />
+                <CheckBox Content="Display Channel 2" VerticalAlignment="Center" IsChecked="{Binding IsChannel2Checked}" Foreground="Blue"/>
             </StackPanel>
         </GroupBox>
 
