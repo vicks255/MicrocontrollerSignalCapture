@@ -24,7 +24,6 @@ namespace ArduinoVoltageReader.ViewModel
 
         private static  IServiceProvider? _services;
         private static  IDevice _device;
-
         private string _channels;
 
         public event PropertyChangedEventHandler PropertyChanged;

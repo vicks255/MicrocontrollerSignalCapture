@@ -32,7 +32,7 @@ namespace ArduinoVoltageReader.DeviceServiceRegistration
             string[] response = new string[4];
             long[] time = new long[2];
             double[] reading = new double[2];
-            double voltsToCountsRatio = 5.0 / 1023;
+            double voltsToCountsRatio = 5.0 / 4096;
 
             // analog pin requires 100us to read.
             // if two channels are being requested, 200us will be required to read.
