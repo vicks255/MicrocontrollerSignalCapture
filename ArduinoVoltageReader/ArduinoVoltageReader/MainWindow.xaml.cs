@@ -37,9 +37,8 @@ namespace ArduinoVoltageReader
         {
             GraphData dataPoints = _appViewModel.ReadWindowAIVoltage();
 
-            _ = float.TryParse(_appViewModel.VoltageRange, out float yScale) ? _yMax = yScale : _yMax = 5;
             Graph.Children.Clear();
-            SetGraph(10, 10);
+            SetGraph(int.Parse(_appViewModel.SamplingWindow), int.Parse(_appViewModel.VoltageRange));
 
             if (_appViewModel.IsChannel1Checked)
                 DrawPoints(dataPoints.Channel1Points, new SolidColorBrush(Colors.Red));
@@ -74,7 +73,8 @@ namespace ArduinoVoltageReader
             Stopwatch sw = new Stopwatch();
 
             this.Dispatcher.Invoke((Action)(() => {
-                SetGraph(10, 24);
+                Graph.Children.Clear();
+                SetGraph(int.Parse(_appViewModel.SamplingWindow), int.Parse(_appViewModel.VoltageRange)); ;
             }));
 
             sw.Start();
@@ -85,7 +85,7 @@ namespace ArduinoVoltageReader
                 {
                     this.Dispatcher.Invoke((Action)(() => {
                         Graph.Children.Clear();
-                        SetGraph(10, 24);
+                        SetGraph(int.Parse(_appViewModel.SamplingWindow), int.Parse(_appViewModel.VoltageRange)); ;
 
                         sw.Restart();
                     }));
@@ -146,8 +146,8 @@ namespace ArduinoVoltageReader
 
             foreach (float[] shape in dataPoints)
             {
-                xValue = (shape[0] / (float.Parse(_appViewModel.SamplingWindow) * 1000)) * _graphWidth;
-                yValue = (shape[1] / float.Parse(_appViewModel.VoltageRange)) * _graphHeight;
+                xValue = (shape[0] * _calibrationFactor / (float.Parse(_appViewModel.SamplingWindow) * 1000)) * _graphWidth;
+                yValue = (shape[1] * _calibrationFactor / float.Parse(_appViewModel.VoltageRange)) * _graphHeight;
 
                 Ellipse channel1Ellipse = new Ellipse
                 {
@@ -186,8 +186,8 @@ namespace ArduinoVoltageReader
             firstPoint = true;
             foreach (float[] shape in dataPoints)
             {
-                xValue = (shape[0] / (float.Parse(_appViewModel.SamplingWindow) * 1000)) * _graphWidth;
-                yValue = (shape[1] / float.Parse(_appViewModel.VoltageRange)) * _graphHeight;
+                xValue = (shape[0] * _calibrationFactor / (float.Parse(_appViewModel.SamplingWindow) * 1000)) * _graphWidth;
+                yValue = (shape[1] * _calibrationFactor / float.Parse(_appViewModel.VoltageRange)) * _graphHeight;
 
                 Ellipse channel1Ellipse = new Ellipse
                 {
