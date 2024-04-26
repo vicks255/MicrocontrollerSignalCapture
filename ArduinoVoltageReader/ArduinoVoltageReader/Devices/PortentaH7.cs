@@ -17,9 +17,17 @@ namespace ArduinoVoltageReader.DeviceServiceRegistration
         private IServiceProvider _services;
         private readonly ISerialCom _serial;
 
-        public float GetSingleAI()
+        public float[] GetSingleAI()
         {
-            throw new NotImplementedException();
+            double voltsToCountsRatio = 5.0 / 1023;
+
+            string[] response = _serial.WriteSerial("GetSingle").Split(',');
+            float[] readings = new float[2];
+
+            readings[0] = (float)(int.Parse(response[0].Trim()) * voltsToCountsRatio);
+            readings[1] = (float)(int.Parse(response[1].Trim()) * voltsToCountsRatio);
+
+            return readings;
         }
 
         public int[] GetContinuousAI(int sampleIntervalInMilliseconds)

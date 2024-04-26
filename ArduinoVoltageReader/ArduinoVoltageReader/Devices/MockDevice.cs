@@ -14,7 +14,7 @@ namespace ArduinoVoltageReader.Devices
             throw new NotImplementedException();
         }
 
-        public float GetSingleAI()
+        public float[] GetSingleAI()
         {
             throw new NotImplementedException();
         }

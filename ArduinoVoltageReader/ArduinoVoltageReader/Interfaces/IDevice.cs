@@ -7,7 +7,7 @@
         void Initialize();
 
         int[] GetContinuousAI(int sampleIntervalInMilliseconds);
-        float GetSingleAI();
+        float[] GetSingleAI();
         string GetWindowAI(int windowInMilliseconds, int sampleIntervalInMicroSeconds, string channels);
     }
 }

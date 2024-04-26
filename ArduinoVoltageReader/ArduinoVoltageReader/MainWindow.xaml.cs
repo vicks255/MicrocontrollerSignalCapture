@@ -5,13 +5,18 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Data;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System;
 
 namespace ArduinoVoltageReader
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         public MainWindow(AppViewModel appViewModel)
         {
@@ -19,11 +24,13 @@ namespace ArduinoVoltageReader
             InitializeComponent();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private AppViewModel _appViewModel;
         private int _graphWidth = 650;
         private int _graphHeight = 300;
-        private float _xMax = 10000;
-        private float _yMax = 5;
+        private bool _isDVMActive = false;
+        private float _calibrationFactor = 6;
 
 
         private void GetSignalCapture(object sender, RoutedEventArgs e)
@@ -42,6 +49,93 @@ namespace ArduinoVoltageReader
         }
 
 
+        private void RecordDVM(object sender, RoutedEventArgs e)
+        {
+            _isDVMActive = !_isDVMActive;
+
+            if (_isDVMActive)
+            {
+                Thread getReadings = new Thread(GetLiveData);
+                getReadings.SetApartmentState(ApartmentState.STA);
+                getReadings.Start();
+
+                _appViewModel.DVMMode = "Stop DVM";
+            }
+            else
+            {
+                _appViewModel.DVMMode = "Start DVM";
+            }
+        }
+        
+
+        private void GetLiveData()
+        {
+            float[] dvmReading;
+            Stopwatch sw = new Stopwatch();
+
+            this.Dispatcher.Invoke((Action)(() => {
+                SetGraph(10, 24);
+            }));
+
+            sw.Start();
+            while (_isDVMActive)
+            {
+                dvmReading = _appViewModel.GetSingleReading();
+                if(sw.Elapsed.TotalMilliseconds > 10000)
+                {
+                    this.Dispatcher.Invoke((Action)(() => {
+                        Graph.Children.Clear();
+                        SetGraph(10, 24);
+
+                        sw.Restart();
+                    }));
+                }
+
+
+                if (_appViewModel.IsChannel1Checked)
+                {
+                    _appViewModel.Channel1SingleReading = System.Math.Round(dvmReading[0] * _calibrationFactor, 2).ToString();
+
+                    this.Dispatcher.Invoke((Action)(() => {
+                        DrawSinglePoint(dvmReading[0] * _calibrationFactor, sw.Elapsed.TotalMilliseconds, new SolidColorBrush(Colors.Red));
+                    }));
+                }
+
+                if (_appViewModel.IsChannel2Checked)
+                {
+                    _appViewModel.Channel2SingleReading = $"{System.Math.Round(dvmReading[1] * _calibrationFactor, 2).ToString()}";
+
+                    this.Dispatcher.Invoke((Action)(() => {
+                        DrawSinglePoint(dvmReading[1] * _calibrationFactor, sw.Elapsed.TotalMilliseconds, new SolidColorBrush(Colors.Blue));
+                    }));
+                }
+            }
+            sw.Stop();
+        }
+
+
+        private void DrawSinglePoint(float dataPoint, double timeStamp, SolidColorBrush solidColorBrush)
+        {
+            double xValue;
+            float yValue;
+
+            xValue = (timeStamp / (float.Parse(_appViewModel.SamplingWindow) * 1000)) * _graphWidth;
+            yValue = (dataPoint / float.Parse(_appViewModel.VoltageRange)) * _graphHeight;
+
+            Ellipse ellipse = new Ellipse
+            {
+                Height = 5,
+                Width = 5,
+                Fill = solidColorBrush,
+                ToolTip = $"Time: {timeStamp} ms\r\nVoltage: {dataPoint} V",
+            };
+
+            Graph.Children.Add(ellipse);
+            Canvas.SetLeft(ellipse, xValue - 2.5);
+            Canvas.SetBottom(ellipse, yValue - 2.5);
+        }
+
+
         private void DrawPoints(List<float[]> dataPoints, SolidColorBrush solidColorBrush)
         {
             float xValue;
@@ -52,8 +146,8 @@ namespace ArduinoVoltageReader
 
             foreach (float[] shape in dataPoints)
             {
-                xValue = (shape[0] / _xMax) * _graphWidth;
-                yValue = (shape[1] / _yMax) * _graphHeight;
+                xValue = (shape[0] / (float.Parse(_appViewModel.SamplingWindow) * 1000)) * _graphWidth;
+                yValue = (shape[1] / float.Parse(_appViewModel.VoltageRange)) * _graphHeight;
 
                 Ellipse channel1Ellipse = new Ellipse
                 {
@@ -92,8 +186,8 @@ namespace ArduinoVoltageReader
             firstPoint = true;
             foreach (float[] shape in dataPoints)
             {
-                xValue = (shape[0] / _xMax) * _graphWidth;
-                yValue = (shape[1] / _yMax) * _graphHeight;
+                xValue = (shape[0] / (float.Parse(_appViewModel.SamplingWindow) * 1000)) * _graphWidth;
+                yValue = (shape[1] / float.Parse(_appViewModel.VoltageRange)) * _graphHeight;
 
                 Ellipse channel1Ellipse = new Ellipse
                 {
@@ -159,6 +253,12 @@ namespace ArduinoVoltageReader
                 };
                 Graph.Children.Add(newLine);
             }
+        }
+
+
+        protected void OnPropertyChanged([CallerMemberName] string control = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(control));
         }
     }
 }

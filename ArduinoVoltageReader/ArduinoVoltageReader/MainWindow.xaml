@@ -42,9 +42,15 @@
         <StackPanel Grid.Row="1" Grid.Column="0">
             <Button  Height="35" VerticalAlignment="Top" Content="Signal Capture" Click="GetSignalCapture"/>
             <Button  Height="35" VerticalAlignment="Top" Content="Export Capture To CSV" Command="{Binding WriteData}"/>
+            <Button  Height="35" VerticalAlignment="Top" Content="{Binding DVMMode}" Click="RecordDVM" />
         </StackPanel>
 
         <Canvas x:Name="Graph" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2">
         </Canvas>
+
+        <StackPanel Grid.Row="3" Grid.Column="2">
+            <TextBox  Height="35" Text="{Binding Channel1SingleReading}" Foreground="Red" />
+            <TextBox  Height="35" Text="{Binding Channel2SingleReading}" Foreground="Blue" />
+        </StackPanel>
     </Grid>
 </Window>

@@ -31,6 +31,22 @@ void loop()
     {
       Serial.println("PortentaH7");
     }
+
+    if(command == "GetSingle")
+    {
+      int loopCount;
+      voltage0 = 0;
+      voltage6 = 0;
+      for(loopCount = 0; loopCount < 20; loopCount++)
+      {
+        voltage0 += analogRead(A0);
+        voltage6 += analogRead(A6);
+      }
+
+      voltage0 = voltage0 / 20;
+      voltage6 = voltage6 / 20;
+      Serial.println(String(voltage0) + "," + String(voltage6));
+    }
       
       
     if(command == "window")

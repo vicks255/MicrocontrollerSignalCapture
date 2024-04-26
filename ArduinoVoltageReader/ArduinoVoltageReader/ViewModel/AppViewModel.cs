@@ -20,6 +20,8 @@ namespace ArduinoVoltageReader.ViewModel
 
             IsChannel1Checked = true;
             IsChannel2Checked = true;
+
+            DVMMode = "Start DVM";
         }
 
         private static  IServiceProvider? _services;
@@ -31,9 +33,10 @@ namespace ArduinoVoltageReader.ViewModel
 
         public List<float[]> Channel1Capture { get; set; }
         public List<float[]> Channel2Capture { get; set; }
+        
         public string SamplingRate { get; set; } = "100";
         public string SamplingWindow { get; set; } = "10";
-        public string VoltageRange { get; set; } = "5";
+        public string VoltageRange { get; set; } = "24";
 
 
         private bool _isChannel1Checked;
@@ -82,6 +85,39 @@ namespace ArduinoVoltageReader.ViewModel
             set
             {
                 _channel2Visible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _channel1SingleReading;
+        public string Channel1SingleReading
+        {
+            get => _channel1SingleReading;
+            set
+            {
+                _channel1SingleReading = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _channel2SingleReading;
+        public string Channel2SingleReading
+        {
+            get => _channel2SingleReading;
+            set
+            {
+                _channel2SingleReading = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _dvmMode;
+        public string DVMMode
+        {
+            get => _dvmMode;
+            set
+            {
+                _dvmMode = value;
                 OnPropertyChanged();
             }
         }
@@ -137,6 +173,12 @@ namespace ArduinoVoltageReader.ViewModel
             {
                 MessageBox.Show("No Data To Export", "No Data", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+
+        public float [] GetSingleReading()
+        {
+            return _device.GetSingleAI();
         }
 
 

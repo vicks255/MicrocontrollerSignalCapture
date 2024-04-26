@@ -1,8 +1,10 @@
 int analogPin0 = A0;
 int analogPin7 = A7;
+int analogRefPin = A3;
 
 int voltage0 = 0;
 int voltage7 = 0;
+int refVoltage = 0;
   
 int window;
 int sampleTime;
@@ -31,6 +33,15 @@ void loop()
     {
       Serial.println("TivaC_123");
     }
+    
+
+    if(command == "GetSingle")
+    {
+      voltage0 = analogRead(analogPin0) - analogRead(analogRefPin);
+      voltage7 = analogRead(analogPin7)  - analogRead(analogRefPin);
+      Serial.println(String(voltage0) + "," + String(voltage7));
+    }
+    
       
     if(command == "window")
     {
