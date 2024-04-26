@@ -37,8 +37,17 @@ void loop()
 
     if(command == "GetSingle")
     {
-      voltage0 = analogRead(analogPin0) - analogRead(analogRefPin);
-      voltage7 = analogRead(analogPin7)  - analogRead(analogRefPin);
+      int loopCount;
+      voltage0 = 0;
+      voltage7 = 0;
+      for(loopCount = 0; loopCount < 20; loopCount++)
+      {
+        voltage0 += analogRead(analogPin0);
+        voltage7 += analogRead(analogPin7);
+      }
+      
+      voltage0 = voltage0 / 20;
+      voltage7 = voltage7 / 20;
       Serial.println(String(voltage0) + "," + String(voltage7));
     }
     
